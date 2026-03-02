@@ -14,5 +14,16 @@ async function writeFileContent(content){
     await writeFile(filePath,JSON.stringify(content,null,2));
 }
 
-module.exports={ readFileContent, writeFileContent };
+async function findUserById(id){
+    const users=await readFileContent();
+    return users.find(element=>element.id===id);
+}
+
+async function addUser(user){
+    const users=await readFileContent();
+    users.push(user);
+    return users;
+}
+
+module.exports={ readFileContent, writeFileContent, findUserById, addUser };
  
