@@ -1,4 +1,4 @@
-const {getUser,getUserById,createUser,deleteUser}=require('../controller/userController.js');
+const {getUser,getUserById,createUser,deleteUser,send}=require('../controller/userController.js');
 
 async function userRoutes(req,res){
             const method=req.method;
@@ -16,6 +16,9 @@ async function userRoutes(req,res){
           else if(method==='DELETE' && requestURL[1]==='user'&&requestURL[2]){
              let id=parseInt(requestURL[2]);
             await deleteUser(res,id);
+         }
+         else{
+            await send(res,400,{message:`bad request`});
          }
 }
 module.exports={userRoutes};
