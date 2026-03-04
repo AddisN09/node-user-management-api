@@ -50,7 +50,7 @@ async function deleteUser(res,id){
          if(!user){
             await send(res,404,{message:`User not found`});
          }
-      const allUsers=await readFileContent();
+      let allUsers=await readFileContent();
       allUsers=allUsers.filter(user=>user.id !== id);
       await writeFileContent(allUsers);
       return await send(res,200,{message: `user deleted successfully`});
