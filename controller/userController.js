@@ -1,5 +1,6 @@
 const {readFileContent,writeFileContent,findUserById,addUser}=require('../model/userModel.js');
 const {hashPassword}=require('../utils/hashPassword.js');
+const {requestBody}=require('../middleware/middleWare.js');
 
 async function send(res,statusCode,data){
     res.writeHead(statusCode,{'Content-Type':'application/json'});
@@ -28,8 +29,9 @@ async function getUserById(id){
         await send(res,400,{message:`There is an error : ${err}`});
     }
 }
-async function createUser(body){
+async function createUser(req){
     try{
+        let body=await requestBody(req)
         let user=await findUserById(body.id);
         if(user){
            return await send(res,404,{message:`user alerady exists`});
