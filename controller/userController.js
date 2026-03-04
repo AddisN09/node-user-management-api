@@ -59,4 +59,4 @@ async function deleteUser(res,id){
          await send(res,400,{message:`There is an error : ${err}`});
     }
 }
-module.exports={getUser,getUserById,createUser,deleteUser};
+module.exports={getUser,getUserById,createUser,deleteUser,send};
