@@ -17,7 +17,7 @@ async function getUser(res){
         await send(res,400,{message:`There is an error : ${err}`});
     }
 }
-async function getUserById(id){
+async function getUserById(res,id){
     try{
          const user=await findUserById(id);
          if(!user){
@@ -29,7 +29,7 @@ async function getUserById(id){
         await send(res,400,{message:`There is an error : ${err}`});
     }
 }
-async function createUser(req){
+async function createUser(req,res){
     try{
         let body=await requestBody(req)
         let user=await findUserById(body.id);
@@ -44,7 +44,7 @@ async function createUser(req){
          await send(res,400,{message:`There is an error : ${err}`});
     }
 }
-async function deleteUser(id){
+async function deleteUser(res,id){
     try{
       const user=await findUserById(id);
          if(!user){
