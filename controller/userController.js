@@ -1,7 +1,7 @@
 const {readFileContent,writeFileContent,findUserById,addUser}=require('../model/userModel.js');
 const {hashPassword}=require('../utils/hashPassword.js');
 const {requestBody}=require('../middleware/middleWare.js');
-const {encryptData, decryptData, encryptUser}=require('../utils/encrypt_decrypt.js');
+const { encryptUser,decryptUser}=require('../utils/encrypt_decrypt.js');
 
 async function send(res,statusCode,data){
     res.writeHead(statusCode,{'Content-Type':'application/json'});
@@ -12,6 +12,9 @@ async function send(res,statusCode,data){
 async function getUser(res){
     try{
         const allUsers=await readFileContent();
+        for(let element of allUsers){
+            element.name=await decryptUser(element);
+        }
         await send(res,200,allUsers);
     }
     catch(err){
@@ -23,7 +26,9 @@ async function getUserById(res,id){
          const user=await findUserById(id);
          if(!user){
             await send(res,404,{message:`User not found`});
+            return;
          }
+         user.name=await decryptUser(user);
          await send(res,200,user);
     }
     catch(err){
