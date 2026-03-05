@@ -1,3 +1,4 @@
+require('dotenv').config();
 const http=require('http');
 const{userRoutes}=require('./routes/userRoutes.js');
 const server=http.createServer(async (req,res)=>{
