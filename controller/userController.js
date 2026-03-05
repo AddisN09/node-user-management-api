@@ -1,6 +1,7 @@
 const {readFileContent,writeFileContent,findUserById,addUser}=require('../model/userModel.js');
 const {hashPassword}=require('../utils/hashPassword.js');
 const {requestBody}=require('../middleware/middleWare.js');
+const {encryptData, decryptData, encryptUser}=require('../utils/encrypt_decrypt.js');
 
 async function send(res,statusCode,data){
     res.writeHead(statusCode,{'Content-Type':'application/json'});
@@ -36,7 +37,8 @@ async function createUser(req,res){
         if(user){
            return await send(res,404,{message:`user alerady exists`});
         }
-        const updatedUsers=await addUser(body);
+        const hashedBody=await encryptUser(body);
+        const updatedUsers=await addUser(hashedBody);
         await writeFileContent(updatedUsers);
         return await send(res,201,{message:`user created successfully`});
     }
