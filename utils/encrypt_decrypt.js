@@ -29,5 +29,11 @@ async function encryptUser(requestBody){
         // password:hashPassword(user.password)
      }
 }
+async function decryptUser(user){
+    const iv=user.name.initializationVector;
+    const data=user.name.encrypt;
+    const decrypted=await decryptData(data,iv);
+    return decrypted;
+}
 
-module.exports={ encryptData, decryptData, encryptUser };
+module.exports={ encryptData, decryptData, encryptUser,decryptUser };
