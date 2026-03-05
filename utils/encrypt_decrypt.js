@@ -1,7 +1,6 @@
-require('dotenv').config({path:'../.env'});
 const {hashPassword}=require('./hashPassword.js');
 const crypto=require('crypto');
-const { hashPassword } = require('./hashPassword');
+ 
 
 const key=Buffer.from(process.env.Encription_key,'hex');
 
@@ -23,12 +22,12 @@ async function decryptData(data,iv){
     return decrypted;
 }
 async function encryptUser(requestBody){
-     const user=await requestBody();
+     const user=requestBody;
      return {
-        name:encryptData(user.name),
-        id:encryptData(user.id),
-        password:hashPassword(user.password)
+        name:await encryptData(user.name),
+        id:user.id,
+        // password:hashPassword(user.password)
      }
 }
 
-module.exports={ encryptData, decryptData };
+module.exports={ encryptData, decryptData, encryptUser };
