@@ -1,20 +1,12 @@
-function requestBody(req){
-   return new Promise((resolve,reject)=>{
-    let body='';
-    req.on('data',chunk=>{
-       body+=chunk;
+const mysql=require('mysql2/promise');
+
+async function connectDb(){
+    return mysql.createConnection({
+        host:process.env.host,
+        user:process.env.user,
+        password:process.env.password,
+        database:process.env.database
     });
-    req.on('end',()=>{
-        try{
-            resolve(JSON.parse(body));
-        }
-        catch(err){
-            reject(err);
-        }
-    });
-    req.on('error',(err)=>{
-        reject(err);
-    });
-   });
 }
-module.exports={requestBody};
+
+module.exports=connectDb;
