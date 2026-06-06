@@ -1,29 +1,37 @@
-const { promisify }=require('util');
-const fs=require('fs');
-const path=require('path');
-
-const filePath=path.join(__dirname,'../data/data.json');
-const readFile=promisify(fs.readFile);
-const writeFile=promisify(fs.writeFile);
-
-async function readFileContent(){
-    const content=await readFile(filePath,'utf8');
-    return JSON.parse(content);
+async function createUser(f_name,l_name,age,sex,connection){
+    const [result]=await connection.query('INSERT INTO users(f_name,l_name,age,sex) VALUES(?,?,?,?)',[f_name,l_name,age,sex]);
+    return result;
 }
-async function writeFileContent(content){
-    await writeFile(filePath,JSON.stringify(content,null,2));
+async function getUser(userId,connection){
+    const [user]=await connection.query('SELECT * FROM users WHERE id=?',[userId]);
+    return user;
 }
-
-async function findUserById(id){
-    const users=await readFileContent();
-    return users.find(element=>element.id===id);
-}
-
-async function addUser(user){
-    const users=await readFileContent();
-    users.push(user);
+async function getAllUsers(connection){
+    const [users]=await connection.query('SELECT * FROM users');
     return users;
 }
-
-module.exports={ readFileContent, writeFileContent, findUserById, addUser };
- 
+async function deleteUser(userId,connection){
+    const [result]=await connection.query('DELETE FROM users WHERE id=?',[userId]);
+    return result;
+}
+async function deleteAllUsers(connection){
+    const [result]=await connection.query('DELETE FROM users');
+    return result;
+}
+async function updateUserPUT(newUserInfo,userId,conecction){
+    const {f_name,l_name,age,sex}=newUserInfo;
+    const [result]=await connection.query(`UPDATE users SET f_name=?,l_name=?,age=?,sex=? WHERE id=?`,[f_name,l_name,age,sex,userId]);
+    return result;
+}
+async function updateUserPATCH(newUserInfo,userId,connection){
+    const fildes=[];
+    const values=[];
+    for(let [key,value] of Object.entries(newUserInfo)){
+           fildes.push(`${[key]}=?`);
+           values.push(value);
+    }
+    values.push(userId);
+    const [result]=await connection.query(`UPDATE users SET ${fildes.join(",")} WHERE id=?`,values);
+    return result;
+}
+module.exports={createUser,deleteAllUsers,deleteUser,getAllUsers,getUser,updateUserPATCH,updateUserPUT}
