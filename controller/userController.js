@@ -3,12 +3,13 @@ const { createUser, getAllUsers, getUser, deleteAllUsers, deleteUser, updateUser
 
 async function createUserController(req, res) {
     try {
-        let { f_name, l_name, age, sex } = req.body;
+        let newUser = req.body;
         const connection = req.app.locals.connect;
-        let result = await createUser(f_name, l_name, age, sex, connection);
+        let result = await createUser(newUser, connection);
         res.status(201).json(result);
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(err);
     }
 }
@@ -24,7 +25,7 @@ async function getUserController(req, res) {
         res.status(500).json(err);
     }
 }
-async function getAllUsersController(re, res) {
+async function getAllUsersController(req, res) {
     try {
         const connection = req.app.locals.connect;
         const users = await getAllUsers(connection);
