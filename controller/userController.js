@@ -1,69 +1,84 @@
-const {readFileContent,writeFileContent,findUserById,addUser}=require('../model/userModel.js');
-const {hashPassword}=require('../utils/hashPassword.js');
-const {requestBody}=require('../middleware/middleWare.js');
-const { encryptUser,decryptUser}=require('../utils/encrypt_decrypt.js');
+const { createUser, getAllUsers, getUser, deleteAllUsers, deleteUser, updateUserPATCH, updateUserPUT } = require('../model/userModel.js');
 
-async function send(res,statusCode,data){
-    res.writeHead(statusCode,{'Content-Type':'application/json'});
-    res.end(JSON.stringify(data,null,2));
-    return;
+
+async function createUserController(req, res) {
+    try {
+        let { f_name, l_name, age, sex } = req.body;
+        const connection = req.app.locals.connect;
+        let result = await createUser(f_name, l_name, age, sex, connection);
+        res.status(201).json(result);
+    }
+    catch (err) {
+        res.status(500).json(err);
+    }
+}
+async function getUserController(req, res) {
+    try {
+        const userId = parseInt(req.params.id);
+        const connection = req.app.locals.connect;
+        const user = await getUser(userId, connection);
+        res.status(200).json(user);
+
+    }
+    catch (err) {
+        res.status(500).json(err);
+    }
+}
+async function getAllUsersController(re, res) {
+    try {
+        const connection = req.app.locals.connect;
+        const users = await getAllUsers(connection);
+        res.status(200).json(user);
+    }
+    catch (err) {
+        res.status(500).json(err);
+    }
+
 }
 
-async function getUser(res){
-    try{
-        const allUsers=await readFileContent();
-        for(let element of allUsers){
-            element.name=await decryptUser(element);
-        }
-        await send(res,200,allUsers);
+async function deleteUserController(req, res) {
+    try {
+        const userId = parseInt(req.params.id);
+        const connection = req.app.locals.connect;
+        const result = await deleteUser(userId, connection);
+        res.status(200).json(result);
     }
-    catch(err){
-        await send(res,400,{message:`There is an error : ${err}`});
-    }
-}
-async function getUserById(res,id){
-    try{
-         const user=await findUserById(id);
-         if(!user){
-            await send(res,404,{message:`User not found`});
-            return;
-         }
-         user.name=await decryptUser(user);
-         await send(res,200,user);
-    }
-    catch(err){
-        await send(res,400,{message:`There is an error : ${err}`});
+    catch (err) {
+        res.status(500).json(err);
     }
 }
-async function createUser(req,res){
-    try{
-        let body=await requestBody(req)
-        let user=await findUserById(body.id);
-        if(user){
-           return await send(res,404,{message:`user alerady exists`});
-        }
-        const hashedBody=await encryptUser(body);
-        const updatedUsers=await addUser(hashedBody);
-        await writeFileContent(updatedUsers);
-        return await send(res,201,{message:`user created successfully`});
+async function deleteAllUsersController(req, res) {
+    try {
+        const connection = req.app.locals.connect;
+        const result = await deleteAllUsers(connection);
+        res.status(200).json(result);
     }
-    catch(err){
-         await send(res,400,{message:`There is an error : ${err}`});
+    catch (err) {
+        res.status(500).json(err);
     }
 }
-async function deleteUser(res,id){
-    try{
-      const user=await findUserById(id);
-         if(!user){
-            await send(res,404,{message:`User not found`});
-         }
-      let allUsers=await readFileContent();
-      allUsers=allUsers.filter(user=>user.id !== id);
-      await writeFileContent(allUsers);
-      return await send(res,200,{message: `user deleted successfully`});
+async function updateUserPartController(req, res) {
+    try {
+        const newUserInfo = req.body;
+        const userId = parseInt(req.params.id);
+        const connection = req.app.locals.connect;
+        const result = await updateUserPATCH(newUserInfo, userId, connection)
+        res.status(200).json(result);
     }
-    catch(err){
-         await send(res,400,{message:`There is an error : ${err}`});
+    catch (err) {
+        res.status(500).json(err);
     }
 }
-module.exports={getUser,getUserById,createUser,deleteUser,send};
+async function updateUserController(req,res){
+    try{
+         let { f_name, l_name, age, sex } = req.body;
+        const connection = req.app.locals.connect;
+         const userId = parseInt(req.params.id);
+        let result = await updateUserPUT(f_name, l_name, age, sex,userId, connection);
+        res.status(201).json(result);
+    }
+    catch(err){
+        res.status(500).json(err);
+    }
+}
+module.exports = { getUserController, getAllUsersController, createUserController, deleteUserController, deleteAllUsersController, updateUserController,updateUserPartController };
