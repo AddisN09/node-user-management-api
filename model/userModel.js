@@ -1,4 +1,5 @@
-async function createUser(f_name,l_name,age,sex,connection){
+async function createUser(newUser,connection){
+    const {f_name,l_name,age,sex}=newUser;
     const [result]=await connection.query('INSERT INTO users(f_name,l_name,age,sex) VALUES(?,?,?,?)',[f_name,l_name,age,sex]);
     return result;
 }
@@ -18,8 +19,7 @@ async function deleteAllUsers(connection){
     const [result]=await connection.query('DELETE FROM users');
     return result;
 }
-async function updateUserPUT(newUserInfo,userId,conecction){
-    const {f_name,l_name,age,sex}=newUserInfo;
+async function updateUserPUT( f_name, l_name, age, sex,userId,conecction){
     const [result]=await connection.query(`UPDATE users SET f_name=?,l_name=?,age=?,sex=? WHERE id=?`,[f_name,l_name,age,sex,userId]);
     return result;
 }
