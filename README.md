@@ -35,6 +35,7 @@ The current implementation focuses on simplicity and learning core backend conce
 | GET    | `/users/:id` | Get a user by ID  |
 | PUT    | `/users/:id` | Update a user     |
 | DELETE | `/users/:id` | Delete a user     |
+| PATCH  | `/users/:id` | update a user part|
 
 ## Example Requests
 
