@@ -1,24 +1,15 @@
-const {getUser,getUserById,createUser,deleteUser,send}=require('../controller/userController.js');
+const express = require('express');
+const router = express.Router();
+const { getUserController, getAllUsersController, createUserController, deleteUserController, deleteAllUsersController, updateUserController, updateUserPartController } = require('../controller/userController.js');
+const { validateUserData } = require('../middleware/inputValidationMiddleware.js');
 
-async function userRoutes(req,res){
-            const method=req.method;
-            const requestURL=req.url.split('/');
-         if(method==='GET' && req.url==='/user'){
-            await getUser(res);
-         }
-         else if(method==='GET' && requestURL[1]==='user'&&requestURL[2]){
-            let id=parseInt(requestURL[2]);
-            await getUserById(res,id);
-         }
-         else if(method==='POST' && req.url==='/user'){
-            await createUser(req,res);
-         }
-          else if(method==='DELETE' && requestURL[1]==='user'&&requestURL[2]){
-             let id=parseInt(requestURL[2]);
-            await deleteUser(res,id);
-         }
-         else{
-            await send(res,400,{message:`bad request`});
-         }
-}
-module.exports={userRoutes};
+router.get('/', getAllUsersController);
+router.get('/:id', getUserController);
+router.post('/', validateUserData, createUserController);
+router.put('/:id', validateUserData, updateUserController);
+router.patch('/:id', updateUserPartController);
+router.delete('/:id', deleteUserController);
+router.delete('/', deleteAllUsersController);
+
+module.exports = { router };
+
